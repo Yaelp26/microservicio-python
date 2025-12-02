@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  # Aplicación PHP Laravel
+  php-auth-booking:
+    build:
+      context: ../php-auth-booking
+      dockerfile: Dockerfile
+    container_name: php-auth-booking-app
+    ports:
+      - "8082:8000"
+    volumes:
+      - ../php-auth-booking:/var/www/html
+      - ../php-auth-booking/storage:/var/www/html/storage
+    environment:
+      - DB_HOST=postgres
+      - DB_DATABASE=booking_db
+      - DB_USERNAME=booking_user
+      - DB_PASSWORD=booking_password
+    depends_on:
+      - postgres
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  # Servicio Python Analytics con FastAPI
+  python-analytics:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: python-analytics-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=booking_db
+      - DB_USER=booking_user
+      - DB_PASSWORD=booking_password
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: php-auth-booking-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: booking_db
+      POSTGRES_USER: booking_user
+      POSTGRES_PASSWORD: booking_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U booking_user -d booking_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ para mensajería entre servicios
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-service
+    ports:
+      - "5672:5672"   # Puerto AMQP
+      - "15672:15672" # Puerto Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Adminer para gestión de BD (opcional, para desarrollo)
+  adminer:
+    image: adminer:latest
+    container_name: php-auth-booking-adminer
+    ports:
+      - "8081:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  microservices-network:
+    driver: bridge
