@@ -2,7 +2,7 @@
 
 Servicio de análisis y estadísticas de ocupación para el sistema de reservas hoteleras. Implementado con **FastAPI** y **RabbitMQ**.
 
-## 🎯 Descripción
+## Descripción
 
 Este servicio genera reportes sobre ocupación y uso del sistema de reservas, cumpliendo con los siguientes requerimientos:
 
@@ -25,7 +25,7 @@ Datos de reservas existentes en la base de datos
 ### Post-condición
 El sistema muestra estadísticas actualizadas
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```
 ┌─────────────┐      HTTP GET      ┌──────────────────┐
@@ -48,31 +48,31 @@ El sistema muestra estadísticas actualizadas
                                     └──────────────────┘
 ```
 
-## 🚀 Características
+## Características
 
-- ✅ API RESTful con FastAPI
-- ✅ Conexión a base de datos PostgreSQL (compartida con Laravel)
-- ✅ Integración con RabbitMQ para mensajería asíncrona
-- ✅ Estadísticas detalladas de ocupación:
+- API RESTful con FastAPI
+- Conexión a base de datos PostgreSQL (compartida con Laravel)
+- Integración con RabbitMQ para mensajería asíncrona
+- Estadísticas detalladas de ocupación:
   - Total de reservaciones
   - Reservaciones activas/completadas/canceladas
   - Tasa de ocupación
   - Estadísticas por hotel
   - Estadísticas por tipo de habitación
   - Estadísticas por estado
-- ✅ Health checks
-- ✅ Documentación automática (Swagger UI)
-- ✅ Logging detallado
-- ✅ Dockerizado
+- Health checks
+- Documentación automática (Swagger UI)
+- Logging detallado
+- Dockerizado
 
-## 📋 Requisitos
+## Requisitos
 
 - Python 3.11+
 - PostgreSQL
 - RabbitMQ
 - Docker y Docker Compose (opcional)
 
-## 🛠️ Instalación
+## Instalación
 
 ### Opción 1: Con Docker (Recomendado)
 
@@ -105,7 +105,7 @@ cp .env.example .env
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-## 📡 Endpoints
+## Endpoints
 
 ### Health Check
 ```http
@@ -160,7 +160,7 @@ GET /analytics/occupancy
 GET /analytics/occupancy/hotel/{hotel_id}
 ```
 
-## 🔧 Configuración
+## Configuración
 
 ### Variables de Entorno
 
@@ -183,7 +183,7 @@ RABBITMQ_QUEUE=analytics_queue
 SERVICE_PORT=8000
 ```
 
-## 🐰 RabbitMQ
+## RabbitMQ
 
 El servicio publica eventos en RabbitMQ cuando se generan estadísticas:
 
@@ -208,14 +208,14 @@ Para ejecutar el consumidor de RabbitMQ:
 python consumer.py
 ```
 
-## 📚 Documentación Interactiva
+## Documentación Interactiva
 
 Una vez iniciado el servicio, accede a:
 
 - **Swagger UI**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
 
-## 🔍 Logging
+## Logging
 
 Los logs incluyen:
 - Conexiones a base de datos
@@ -224,9 +224,9 @@ Los logs incluyen:
 - Errores y excepciones
 - Estadísticas generadas
 
-## 🧪 Testing
+## Testing
 
-### Opción 1: Dashboard HTML Interactivo (Más Fácil) 🎨
+### Opción 1: Dashboard HTML Interactivo (Más Fácil)
 
 Abre el archivo `test_api.html` en tu navegador:
 
@@ -236,10 +236,10 @@ open test_api.html  # macOS
 ```
 
 Este dashboard te permite:
-- ✅ Verificar el health check
-- 📊 Ver estadísticas en tiempo real
-- 🏨 Consultar hoteles específicos
-- 🎨 Visualización interactiva de datos
+- Verificar el health check
+- Ver estadísticas en tiempo real
+- Consultar hoteles específicos
+- Visualización interactiva de datos
 
 ### Opción 2: Tests con cURL
 
@@ -271,16 +271,16 @@ pytest
 
 ---
 
-## 🎯 Conectar con Frontend
+## Conectar con Frontend
 
 Revisa la guía completa en [`API_CONFIG.md`](./API_CONFIG.md) que incluye:
-- 📝 Documentación completa de endpoints
-- 💻 Ejemplos en JavaScript/Fetch
-- ⚛️ Ejemplos en React
-- 📦 Ejemplos con Axios
-- 🔄 Auto-actualización
-- 📊 Visualización de datos
-- 🔐 Configuración de seguridad
+- Documentación completa de endpoints
+- Ejemplos en JavaScript/Fetch
+- Ejemplos en React
+- Ejemplos con Axios
+- Auto-actualización
+- Visualización de datos
+- Configuración de seguridad
 
 ### Quick Start para Frontend
 
@@ -295,7 +295,7 @@ console.log('Activas:', data.data.active_reservations);
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Instalar dependencias de testing
@@ -305,7 +305,7 @@ pip install pytest pytest-asyncio httpx
 pytest
 ```
 
-## 📊 Monitoreo
+## Monitoreo
 
 ### Health Check
 ```bash
@@ -320,7 +320,7 @@ Usuario: guest
 Password: guest
 ```
 
-## 🐳 Docker Compose Completo
+## Docker Compose Completo
 
 Para integrar con el servicio PHP Laravel, actualiza el `docker-compose.yml` principal:
 
@@ -356,7 +356,7 @@ services:
     restart: unless-stopped
 ```
 
-## 🤝 Integración con Laravel
+## Integración con Laravel
 
 El servicio Laravel puede consumir este API:
 
@@ -367,14 +367,14 @@ $response = Http::get('http://python-analytics:8000/analytics/occupancy');
 $stats = $response->json();
 ```
 
-## 📝 Notas
+## Notas
 
 - El servicio comparte la base de datos con Laravel (booking_db)
 - Los modelos SQLAlchemy reflejan las tablas de Laravel
 - RabbitMQ permite comunicación asíncrona entre servicios
 - El servicio es stateless y escalable horizontalmente
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 ### Error de conexión a PostgreSQL
 ```bash
@@ -394,10 +394,10 @@ docker ps | grep rabbitmq
 docker logs rabbitmq-service
 ```
 
-## 📄 Licencia
+## Licencia
 
 MIT License
 
-## 👥 Autor
+## Autor
 
 Sistema de Microservicios - Reservas Hoteleras
