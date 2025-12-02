@@ -43,6 +43,10 @@ services:
       - RABBITMQ_PORT=5672
       - RABBITMQ_USER=guest
       - RABBITMQ_PASSWORD=guest
+      - JWT_SECRET=7rTsLU4hJE0X80Wau2EYeBL6vp0pg1VWhy7mi7PvXuMozvUelbRFnpGA2yMq2t0A
+      - JWT_ALGORITHM=HS256
+      - JWT_ISS=travelink-laravel
+      - JWT_AUD=travelink-api
     depends_on:
       postgres:
         condition: service_started

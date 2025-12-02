@@ -22,6 +22,12 @@ class Settings(BaseSettings):
     rabbitmq_password: str = "guest"
     rabbitmq_queue: str = "analytics_queue"
     
+    # JWT
+    jwt_secret: str = "7rTsLU4hJE0X80Wau2EYeBL6vp0pg1VWhy7mi7PvXuMozvUelbRFnpGA2yMq2t0A"
+    jwt_algorithm: str = "HS256"
+    jwt_iss: str = "travelink-laravel"
+    jwt_aud: str = "travelink-api"
+    
     # Service
     service_port: int = 8000
     

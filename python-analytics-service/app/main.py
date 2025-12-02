@@ -9,6 +9,7 @@ from app.schemas import OccupancyResponse, ErrorResponse
 from app.services.analytics_service import AnalyticsService
 from app.rabbitmq import rabbitmq_client
 from app.config import get_settings
+from app.auth import get_current_user, require_admin
 import logging
 from datetime import datetime
 
@@ -87,18 +88,24 @@ async def health_check():
     },
     tags=["Analytics"]
 )
-async def get_occupancy_statistics(db: Session = Depends(get_db)):
+async def get_occupancy_statistics(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_admin)
+):
     """
-    Obtener estadísticas de ocupación
+    Obtener estadísticas de ocupación (requiere autenticación de admin)
     
     Este endpoint procesa la información de la base de datos de reservas
     y genera estadísticas detalladas de ocupación.
     
+    **Requiere:** Token JWT válido con rol de admin
+    
     **Flujo:**
-    1. El admin envía GET /analytics/occupancy
-    2. Python procesa la información de la base de datos
-    3. Genera estadísticas de ocupación
-    4. Devuelve los resultados al cliente
+    1. El admin envía GET /analytics/occupancy con token JWT
+    2. Se valida el token y rol de admin
+    3. Python procesa la información de la base de datos
+    4. Genera estadísticas de ocupación
+    5. Devuelve los resultados al cliente
     
     **Actores:** Admin, Servicio Python (Analytics)
     
@@ -106,7 +113,7 @@ async def get_occupancy_statistics(db: Session = Depends(get_db)):
         OccupancyResponse con las estadísticas de ocupación
     """
     try:
-        logger.info("Solicitando estadísticas de ocupación...")
+        logger.info(f"Usuario {current_user.get('email')} solicitando estadísticas...")
         
         # Generar estadísticas
         analytics_service = AnalyticsService()
@@ -149,9 +156,15 @@ async def get_occupancy_statistics(db: Session = Depends(get_db)):
 
 
 @app.get("/analytics/occupancy/hotel/{hotel_id}", tags=["Analytics"])
-async def get_hotel_occupancy(hotel_id: int, db: Session = Depends(get_db)):
+async def get_hotel_occupancy(
+    hotel_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_admin)
+):
     """
-    Obtener estadísticas de ocupación de un hotel específico
+    Obtener estadísticas de ocupación de un hotel específico (requiere autenticación de admin)
+    
+    **Requiere:** Token JWT válido con rol de admin
     
     Args:
         hotel_id: ID del hotel
@@ -160,6 +173,8 @@ async def get_hotel_occupancy(hotel_id: int, db: Session = Depends(get_db)):
         Estadísticas específicas del hotel
     """
     try:
+        logger.info(f"Usuario {current_user.get('email')} consulta hotel {hotel_id}")
+        
         from sqlalchemy import func, case
         from app.models import Reservation
         
