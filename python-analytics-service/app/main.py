@@ -125,7 +125,7 @@ async def get_occupancy_statistics(db: Session = Depends(get_db)):
             }
             rabbitmq_client.publish_message(message)
         except Exception as e:
-            logger.error(f"Error crítico al publicar en RabbitMQ: {e}", exc_info=True)
+            logger.warning(f"No se pudo publicar en RabbitMQ: {e}")
         
         logger.info("Estadísticas generadas exitosamente")
         
