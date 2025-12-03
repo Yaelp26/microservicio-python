@@ -178,12 +178,12 @@ async def get_hotel_occupancy(
         from sqlalchemy import func, case
         from app.models import Reservation
         
-        # Consultar reservas del hotel
+        # Consultar reservas del hotel (convertir hotel_id a string para comparación)
         total = db.query(func.count(Reservation.id))\
-            .filter(Reservation.hotel_id == hotel_id).scalar() or 0
+            .filter(Reservation.hotel_id == str(hotel_id)).scalar() or 0
         
         active = db.query(func.count(Reservation.id))\
-            .filter(Reservation.hotel_id == hotel_id)\
+            .filter(Reservation.hotel_id == str(hotel_id))\
             .filter(Reservation.status == 'confirmed').scalar() or 0
         
         occupancy_rate = round((active / total * 100), 2) if total > 0 else 0

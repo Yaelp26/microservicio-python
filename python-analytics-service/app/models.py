@@ -12,7 +12,7 @@ class Reservation(Base):
     
     id = Column(BigInteger, primary_key=True, index=True)
     user_id = Column(BigInteger, ForeignKey("users.id"), nullable=False)
-    hotel_id = Column(Integer, nullable=False)
+    hotel_id = Column(String(255), nullable=False)  # Changed to String
     room_type = Column(String(255), nullable=False)
     check_in = Column(DateTime, nullable=False)
     check_out = Column(DateTime, nullable=False)
